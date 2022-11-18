@@ -17,7 +17,7 @@ void main()
     if (l == 0.0)
         alpha = g_strength;
     else {
-        alpha = min(1.0, g_strength - (l * 2));
+        alpha = min(1.0, g_strength - sqrt(l * 2));
     }
     vec3 c = g_color.rgb;
     // c.xy += v_uv.xy * 0.05;
