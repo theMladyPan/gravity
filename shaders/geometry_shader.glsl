@@ -11,33 +11,37 @@ uniform Projection {
 in vec2 vertex_pos[];
 in vec4 vertex_color[];
 in float vertex_radius[];
-in float v_strength[];
 
 out vec2 g_uv;
 out vec3 g_color;
-out float g_strength;
+out float g_radius;
+// out vec2 g_origin;
 
 void main() {
     vec2 center = vertex_pos[0];
     vec2 hsize = vec2(vertex_radius[0]);
-    g_strength = v_strength[0];
-
+    float g_radius = vertex_radius[0];
+    
     g_color = vertex_color[0].rgb;
 
-    gl_Position = proj.matrix * vec4(vec2(-hsize.x, hsize.y) + center, 0.0, 1.0);
+    gl_Position = proj.matrix * vec4(vec2(-hsize.x, hsize.y) + center, 0.0, 1);
     g_uv = vec2(0, 1);
+    // g_origin = gl_Position.xy;
     EmitVertex();
 
-    gl_Position = proj.matrix * vec4(vec2(-hsize.x, -hsize.y) + center, 0.0, 1.0);
+    gl_Position = proj.matrix * vec4(vec2(-hsize.x, -hsize.y) + center, 0.0, 1);
     g_uv = vec2(0, 0);
+    // g_origin = gl_Position.xy;
     EmitVertex();
 
-    gl_Position = proj.matrix * vec4(vec2(hsize.x, hsize.y) + center, 0.0, 1.0);
+    gl_Position = proj.matrix * vec4(vec2(hsize.x, hsize.y) + center, 0.0, 1);
     g_uv = vec2(1, 1);
+    // g_origin = gl_Position.xy;
     EmitVertex();
 
-    gl_Position = proj.matrix * vec4(vec2(hsize.x, -hsize.y) + center, 0.0, 1.0);
+    gl_Position = proj.matrix * vec4(vec2(hsize.x, -hsize.y) + center, 0.0, 1);
     g_uv = vec2(1, 0);
+    // g_origin = gl_Position.xy;
     EmitVertex();
 
     EndPrimitive();

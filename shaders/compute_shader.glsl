@@ -60,12 +60,12 @@ void main()
 
         // If stars get too close the fling into never-never land.
         // So use a minimum distance
-        float minDistance = .01;
-        float gravityStrength = .1;
-        float simulationSpeed = 0.002;
+        float minDistance = .0003;
+        float gravityStrength = .6;
+        float simulationSpeed = 0.001;
 
         //calculate gravity
-        float gravity = gravityStrength * pow(In.balls[i].pos.xyzw.w, 3) * pow(p.w, 3);
+        float gravity = gravityStrength * pow(In.balls[i].pos.xyzw.w, 2) * pow(p.w, 2);
 
         if(dist > minDistance)
         {
@@ -81,12 +81,13 @@ void main()
         }
         else
         {   
+            Ball coll = In.balls[i];
             vec3 momentum1 = v.xyz * v.w;
             vec3 momentum2 = In.balls[i].vel.xyz * In.balls[i].vel.w ;
             vec3 momentum = momentum1 + momentum2;
             // we probably hitted sth
-            v.xyz = (v.xyz + In.balls[i].vel.xyz)/2.1;
-            In.balls[i].vel.xyz = (v.xyz + In.balls[i].vel.xyz)/2.1;
+            v.xyz = (v.xyz * p.w + coll.vel.xyz * coll.pos.w)/p.w;
+            In.balls[i].vel.xyz = (v.xyz * p.w + coll.vel.xyz * coll.pos.w)/coll.pos.w;
            // break;
         }
     }

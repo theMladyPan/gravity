@@ -1,6 +1,8 @@
 """
 Compute shader with buffers
 """
+
+# pyinstaller.exe .\main.py --add-data "shaders/;shaders/"
 import random
 import math
 from array import array
@@ -9,8 +11,10 @@ import arcade
 from arcade.gl import BufferDescription
 
 # Window dimensions
-WINDOW_WIDTH = 1900
-WINDOW_HEIGHT = 1000
+WINDOW_WIDTH = 1910
+WINDOW_HEIGHT = 1070
+
+WINDOW_WIDTH, WINDOW_HEIGHT = arcade.window_commands.get_display_size()
 
 # Size of performance graphs
 GRAPH_WIDTH = 200
@@ -28,10 +32,13 @@ class MyWindow(arcade.Window):
         # Call parent constructor
         # Ask for OpenGL 4.3 context, as we need that for compute shader support.
         super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT,
-                         "Compute Shader",
-                         gl_version=(4, 3),
-                         #resizable=True, 
-                         fullscreen=True)
+                        "Compute Shader",
+                        gl_version=(4, 3),
+                        #resizable=True, 
+                        fullscreen=False,
+                        vsync=False
+                        #draw_rate=0.005
+                        )
         self.center_window()
 
         # --- Class instance variables
@@ -41,7 +48,7 @@ class MyWindow(arcade.Window):
 
         # This has something to do with how we break the calculations up
         # and parallelize them.
-        self.group_x = 256
+        self.group_x = math.ceil(math.sqrt(self.num_stars))
         self.group_y = 1
 
         # --- Create buffers
@@ -54,7 +61,7 @@ class MyWindow(arcade.Window):
         # Generate the initial data that we will put in buffer 1.
         # Pick one of these or make your own function
         # initial_data = self.gen_random_space()
-        initial_data = self.gen_galaxy_rotating()
+        initial_data = self.gen_galaxies_colliding()
 
         # Create data buffers for the compute shader
         # We ping-pong render between these two buffers
@@ -168,9 +175,9 @@ class MyWindow(arcade.Window):
             yield 1.0  # a
 
     def gen_galaxies_colliding(self):
-        radius = 3.0
+        radius = 1.2
         
-        STARFIELD_RADIUS = 500
+        STARFIELD_RADIUS = 200
         for i in range(self.num_stars):
             # Position/radius
             angle = random.random() * math.pi * 2
@@ -178,22 +185,22 @@ class MyWindow(arcade.Window):
             distance = random.random() * STARFIELD_RADIUS
 
             # Alternate stars between galaxies
-            if i % 2 == 0:
-                yield distance * math.cos(angle) - STARFIELD_RADIUS
-                yield distance * math.sin(angle) + WINDOW_HEIGHT / 2
+            if i % 4 == 0:
+                yield distance * math.cos(angle) - STARFIELD_RADIUS + WINDOW_WIDTH/4
+                yield distance * math.sin(angle) + WINDOW_HEIGHT / 2 + 200
             else:
-                yield distance * math.cos(angle) + STARFIELD_RADIUS + WINDOW_WIDTH
+                yield distance * math.cos(angle) + STARFIELD_RADIUS + WINDOW_WIDTH*3/4
                 yield distance * math.sin(angle) + WINDOW_HEIGHT / 2
             yield 0#distance * math.sin(angle2)
-            yield radius * pow_random(5)
+            yield radius * pow_random(0)
 
             # Velocity
-            if i % 2 == 0:
-                yield math.cos(angle + math.pi / 2) * distance / 100
-                yield math.sin(angle + math.pi / 2) * distance / 100 + .2
+            if i % 4 == 0:
+                yield math.cos(angle + math.pi / 2) * distance / 50 + 2
+                yield math.sin(angle + math.pi / 2) * distance / 50 
             else:
-                yield math.cos(angle + math.pi / 2) * distance / 100
-                yield math.sin(angle + math.pi / 2) * distance / 100 - .2
+                yield math.cos(angle + math.pi / 2) * distance / 50 - 6
+                yield math.sin(angle + math.pi / 2) * distance / 50
             yield 0# math.sin(angle2 + math.pi / 2) * distance / 100
             yield 0.0  # vw (padding)
 
@@ -204,18 +211,18 @@ class MyWindow(arcade.Window):
             yield 1.0  # a
 
     def gen_galaxy_rotating(self):
-        radius = 2
+        radius = 1.5
         
-        STARFIELD_RADIUS = 1000
+        STARFIELD_RADIUS = 1500
         for i in range(self.num_stars):
             # Position/radius
             angle = random.random() * math.pi * 2
-            distance = random.random() * STARFIELD_RADIUS
+            distance = pow_random(2) * STARFIELD_RADIUS
 
             yield distance * math.cos(angle) + WINDOW_WIDTH / 2
             yield distance * math.sin(angle) + WINDOW_HEIGHT / 2
             yield 0 # distance * math.sin(angle)
-            yield radius * pow_random(.001)
+            yield radius * pow_random(0)
 
             # Velocity
             yield math.cos(angle + math.pi / 2) * distance / 150
