@@ -154,7 +154,7 @@ class MyWindow(arcade.Window):
     def gen_random_space(self):
         radius = 3.0
 
-        for i in range(self.num_stars):
+        for _ in range(self.num_stars):
             # Position/radius
 
             yield random.random() * WINDOW_WIDTH
@@ -176,7 +176,7 @@ class MyWindow(arcade.Window):
 
     def gen_galaxies_colliding(self):
         radius = 1.2
-        
+
         STARFIELD_RADIUS = 200
         for i in range(self.num_stars):
             # Position/radius
@@ -197,10 +197,9 @@ class MyWindow(arcade.Window):
             # Velocity
             if i % 4 == 0:
                 yield math.cos(angle + math.pi / 2) * distance / 50 + 2
-                yield math.sin(angle + math.pi / 2) * distance / 50 
             else:
                 yield math.cos(angle + math.pi / 2) * distance / 50 - 6
-                yield math.sin(angle + math.pi / 2) * distance / 50
+            yield math.sin(angle + math.pi / 2) * distance / 50
             yield 0# math.sin(angle2 + math.pi / 2) * distance / 100
             yield 0.0  # vw (padding)
 
@@ -212,9 +211,9 @@ class MyWindow(arcade.Window):
 
     def gen_galaxy_rotating(self):
         radius = 1.5
-        
+
         STARFIELD_RADIUS = 1500
-        for i in range(self.num_stars):
+        for _ in range(self.num_stars):
             # Position/radius
             angle = random.random() * math.pi * 2
             distance = pow_random(2) * STARFIELD_RADIUS
@@ -241,7 +240,7 @@ class MyWindow(arcade.Window):
         
         STARFIELD_RADIUS = 1500
         radius = 3
-        for i in range(self.num_stars):
+        for _ in range(self.num_stars):
             # Position/radius
             angle = random.random() * math.pi * 2
             distance = random.random() * STARFIELD_RADIUS
