@@ -170,7 +170,7 @@ class GameOfLife(arcade.Window):
         data, but it works for this example :)
         """
         choices = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 64, 128, 192, 255]
-        for i in range(num_values):
+        for _ in range(num_values):
             yield random.choice(choices)
 
     def write_initial_state(self):
